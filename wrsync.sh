@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#DISPLAY=:0.0
+
 # TODO: folder end slash
 
 function set-defaults {
