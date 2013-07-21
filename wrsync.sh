@@ -1,5 +1,62 @@
 #!/bin/bash
 
+# exit codes:
+# 0 -- OK
+# 1 -- Failed to sync
+# 2 -- Rsync already running
+# 3 -- Fialed to read configuration
+
+# TODO:
+# pliki lock.timestamp
+
+
+#Time Machine
+
+date=`date "+%Y-%m-%dT%H_%M_%S"`
+HOME=/home/user/
+
+rsync -azP \
+  --delete \
+  --delete-excluded \
+  --exclude-from=$HOME/.rsync/exclude \
+  --link-dest=../current \
+  $HOME user@backupserver:Backups/incomplete_back-$date \
+  && ssh user@backupserver \
+  "mv Backups/incomplete_back-$date Backups/back-$date \
+  && rm -f Backups/current \
+  && ln -s back-$date Backups/current"
+
+
+# TODO
+# przeczytaj konfigurację z pliku ./.wrsync/config
+
+REMOTE_HOST="dawid@weckowski.net"
+REMOTE_PATH="/home/dawid/sync/"
+LOCAL_PATH="/home/dawid/sync/"
+GLOBAL_CONFIG_PATH="/home/dawid/.config/wrsync/"
+
+EXCLUDE_FILE="exclude"
+RSYNC_LOG="rsync.log"
+
+PROGRAM_NAME="rsync"
+
+# sprawdź czy chodzi już wrsync, jeśli tak to przerwij
+pgrep $PROGRAM_NAME && exit 2
+
+# sprawdź czy masz plik ./.wrsync/timestamp
+# jeśli nie masz pliku ./.wrsync/timestamp to wykonaj dwustronną synchronizację bez usuwania, zachowaj nowsze pliki
+# jeśli masz plik ./.wrsync/timestamp to sprawdź czy analogiczny plik na serwerze jest identyczny
+# jeżeli plik się różni, to wykonaj synchronizację z serwera, zachowaj nowsze pliki, usuń pliki, których nie ma na serwerze a mają datę modyfikacji mniejszą niż timestamp,
+# wykonaj synchronizację na serwer
+# uaktualnij timestamp i wyślij na serwer
+
+
+
+#####################################################
+
+
+
+
 #DISPLAY=:0.0
 
 # TODO: folder end slash
